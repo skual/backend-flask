@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from flask import Flask, redirect, send_file, g, request
+from flask import Flask, redirect, g, request
 
 import configs
 from routes import urls

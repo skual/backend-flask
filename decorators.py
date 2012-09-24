@@ -14,7 +14,9 @@ def requires(*args):
                     errors[key].append('Required')
 
             if len(errors) > 0:
-                return (jsonify({'code': '0100', 'message': 'Required fields are missing', 'errors': errors}), 406)
+                response = jsonify({'code': '0100', 'message': 'Required fields are missing', 'errors': errors})
+                response.status_code = 406
+                return response
 
             return view_func()
         return wraps(view_func)(_decorator)
@@ -23,13 +25,19 @@ def requires(*args):
 def authenticated(view_func):
     def _decorator(*args, **kwargs):
         if 'token' not in request.args:
-            return (jsonify({'disconnected': True, 'code': '0001', 'message': 'Token is required.'}), 406);
+            response = jsonify({'disconnected': True, 'code': '0001', 'message': 'Token is required.'})
+            response.status_code = 406
+            return response
         
         if 'session' not in g.__dict__ or g.session is None:
-            return (jsonify({'disconnected': True, 'code': '0000', 'message': 'Session does not exist or has expired.'}), 401);
+            response = jsonify({'disconnected': True, 'code': '0000', 'message': 'Session does not exist or has expired.'})
+            response.status_code = 401
+            return response
 
         if not g.session.is_connected():
-            return (jsonify({'disconnected': True, 'code': '0002', 'message': 'Invalid session found.'}), 401);
+            response = jsonify({'disconnected': True, 'code': '0002', 'message': 'Invalid session found.'})
+            response.status_code = 401
+            return response
             
         return view_func(*args, **kwargs)
 

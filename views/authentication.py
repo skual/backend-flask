@@ -44,7 +44,9 @@ def connect():
             'expire': mktime(g.session.expire.timetuple())
         })
     except OperationalError as e:
-        return (jsonify ({'code': e.orig[0], 'message': e.orig[1]}), 400)
+        response = jsonify ({'code': e.orig[0], 'message': e.orig[1]})
+        response.status_code = 400
+        return response
 
 def disconnect():
     if 'session' in g.__dict__:
